@@ -7,6 +7,24 @@
     <title>اختبار بسيط</title>
     <link rel="stylesheet" href="dist/styles.css" />
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"> </script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fade-in 0.3s ease-out;
+        }
+    </style>
 
 </head>
 
@@ -16,6 +34,21 @@
             <h1 class="font-bold text-5xl text-center text-indigo-700">اختبار بسيط</h1>
             <div class="bg-white p-12 rounded-lg shadow-lg w-full mt-8">
                 <div v-if="index < count" :key="index">
+                    <div v-if="showResult"
+                        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                        <div class="bg-white rounded-lg shadow-lg p-6 w-80 text-center animate-fade-in">
+                            <h2 :class="{'text-green-600': correctAnswers >= 5, 'text-red-600': correctAnswers < 5}"
+                                class="text-2xl font-bold mb-4">
+                                {{ correctAnswers >= count/2 ? '🎉 مبروك!' : '😢 للأسف' }}
+                            </h2>
+                            <p>أجبت على {{ correctAnswers }} من {{ count }} إجابة صحيحة.</p>
+                            <button @click="resetQuiz"
+                                class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-full">
+                                إعادة المحاولة
+                            </button>
+                        </div>
+                    </div>
+
                     <p class="text-2xl font-bold"> {{ index+1}} - {{ questions[index]['question']}}</p>
                     <label :for="`q${index}-${key}`"
                         class="block mt-4 border border-gray-300 rounded-lg py-2 px-6 text-lg"
@@ -28,15 +61,6 @@
                             :name="`question-${index}`" @change="answered($event)" :disabled="selectedAnswer != ''" />
                         {{ answer }}
                     </label>
-
-                    <!-- <label :for="key" class="block mt-4 border border-gray-300 rounded-lg py-2 px-6 text-lg "
-                        v-for="(answer,key) in questions[index]['answers']" :class="{'hover:bg-gray-100 cursor-pointer': selectedAnswer ==''},
-                    {'bg-red-300':selectedAnswer==key},
-                    {'bg-green-200': key == questions[index]['correctAnswer'] && selectedAnswer !=''} ">
-                        <input type="radio" :id="key" class="hidden" :value="key" @change="answered($event)"
-                            :disabled="selectedAnswer!=''" /> {{ answer}}
-                    </label> -->
-
                     <div class="mt-5 flow-root">
                         <button class="float-left px-5 py-2 bg-indigo-700 text-white text-sm font-bold rounded-full "
                             v-show="selectedAnswer!='' && index < count-1" @click="nextQuestion">التالي

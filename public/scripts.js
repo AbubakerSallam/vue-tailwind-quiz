@@ -6,6 +6,7 @@ const app = Vue.createApp({
             count: 10,
             correctAnswers: 0,
             wrongAnswers: 0,
+            showResult: false,
             questions: [
                 {
                     question: "ما هي وظيفة خاصية 'margin' في CSS؟",
@@ -124,15 +125,40 @@ const app = Vue.createApp({
             this.selectedAnswer = '';
         },
         showResults() {
-            this.index++
-            console.log(this.wrongAnswers)
-            console.log(this.correctAnswers)
+            this.showResult = true;
+            // this.index++
+            if (this.correctAnswers >= this.count / 2) {
+                this.startConfetti();
+            } else {
+                this.showSadEmojis();
+            }
         },
         resetQuiz() {
+            this.showResult = true;
             this.index = 0
             this.selectedAnswer = ''
             this.wrongAnswers = 0
             this.correctAnswers = 0
+            this.showResult = false
+        },
+        startConfetti() {
+            confetti({
+                particleCount: 250,
+                spread: 70,
+                origin: { y: 0.2 }
+            });
+        },
+        showSadEmojis() {
+            const emojis = ['😢', '💔', '😞'];
+            for (let i = 0; i < 20; i++) {
+                const emoji = document.createElement('div');
+                emoji.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                emoji.className = 'fixed top-0 text-3xl animate-bounce';
+                emoji.style.left = `${Math.random() * 100}%`;
+                document.body.appendChild(emoji);
+
+                setTimeout(() => emoji.remove(), 3000);
+            }
         }
     }
 })
